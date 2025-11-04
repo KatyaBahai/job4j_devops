@@ -13,20 +13,25 @@ pipeline {
                 }
             }
         }
-        stage('Checkstyle Main') {
-            steps {
-                script {
-                    sh './gradlew checkstyleMain'
+        stage('CheckStyle') {
+            parallel {
+                stage('Checkstyle Main') {
+                    steps {
+                        script {
+                            sh './gradlew checkstyleMain'
+                        }
+                    }
+                }
+                stage('Checkstyle Test') {
+                    steps {
+                        script {
+                            sh './gradlew checkstyleTest'
+                        }
+                    }
                 }
             }
         }
-        stage('Checkstyle Test') {
-            steps {
-                script {
-                    sh './gradlew checkstyleTest'
-                }
-            }
-        }
+
         stage('Compile') {
             steps {
                 script {
@@ -34,24 +39,29 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
-            steps {
-                script {
-                    sh './gradlew test'
+
+        stage('JaCoCoTesting') {
+             parallel {
+                stage('Test') {
+                    steps {
+                        script {
+                            sh './gradlew test'
+                        }
+                    }
                 }
-            }
-        }
-        stage('JaCoCo Report') {
-            steps {
-                script {
-                    sh './gradlew jacocoTestReport'
+                stage('JaCoCo Report') {
+                    steps {
+                        script {
+                            sh './gradlew jacocoTestReport'
+                        }
+                    }
                 }
-            }
-        }
-        stage('JaCoCo Verification') {
-            steps {
-                script {
-                    sh './gradlew jacocoTestCoverageVerification'
+                stage('JaCoCo Verification') {
+                    steps {
+                        script {
+                            sh './gradlew jacocoTestCoverageVerification'
+                        }
+                    }
                 }
             }
         }
