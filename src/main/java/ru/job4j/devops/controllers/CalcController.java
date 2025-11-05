@@ -2,12 +2,13 @@ package ru.job4j.devops.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.devops.controllers.api.CalcControllerApi;
 import ru.job4j.devops.models.Result;
 import ru.job4j.devops.models.TwoArgs;
 
 @RestController
 @RequestMapping("calc")
-public class CalcController {
+public class CalcController implements CalcControllerApi {
     @PostMapping("summarise")
     public ResponseEntity<Result> summarise(@RequestBody TwoArgs twoArgs) {
         var result = twoArgs.getFirst() + twoArgs.getSecond();
