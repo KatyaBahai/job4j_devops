@@ -4,10 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A class that contains 2 numbers meant for math operations
+ */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class TwoArgs {
     private double first;
     private double second;
+
+    /**
+     * Creates an empty TwoArgs object.
+     * Values must be set later via JSON input.
+     */
+    public TwoArgs() {
+    }
 }

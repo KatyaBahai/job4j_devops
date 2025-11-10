@@ -11,8 +11,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.job4j.devops.models.Result;
 import ru.job4j.devops.models.TwoArgs;
 
+/**
+ * API for calculator operations.
+ */
 @Tag(name = "AuthController", description = "AuthController management APIs")
 public interface CalcControllerApi {
+    /**
+     * Adds two numbers.
+     *
+     * @param twoArgs the two numbers to sum
+     * @return the calculation result
+     */
     @Operation(
             summary = "Add 2 numbers",
             tags = {"post"})
@@ -23,6 +32,12 @@ public interface CalcControllerApi {
             @ApiResponse(responseCode = "400", content = {@Content(schema = @Schema())})})
     ResponseEntity<Result> summarise(@RequestBody TwoArgs twoArgs);
 
+    /**
+     * Multiplies two numbers.
+     *
+     * @param twoArgs the two numbers to multiply
+     * @return the calculation result
+     */
     @Operation(
             summary = "Multiply two numbers",
             tags = {"post"})

@@ -9,6 +9,25 @@ plugins {
 group = "ru.job4j.devops"
 version = "1.0.0"
 
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
+	implementation(libs.springBootWeb)
+    implementation(libs.springdoc)
+	testImplementation(libs.springBootTest)
+	testRuntimeOnly(libs.junitPlatformLauncher)
+	testImplementation(libs.junitJupiter)
+	testImplementation(libs.assertj)
+}
+
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
 tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
@@ -31,21 +50,14 @@ tasks.jacocoTestCoverageVerification {
     }
 }
 
-repositories {
-	mavenCentral()
+tasks.register<Zip>("zipJavaDoc") {
+    group = "documentation"
+    description = "Packs the generated Javadoc into a zip archive"
+
+    dependsOn("javadoc")
+
+    from("build/docs/javadoc")
+    archiveFileName.set("javadoc.zip")
+    destinationDirectory.set(layout.buildDirectory.dir("archives"))
 }
 
-dependencies {
-	compileOnly(libs.lombok)
-	annotationProcessor(libs.lombok)
-	implementation(libs.springBootWeb)
-    implementation(libs.springdoc)
-	testImplementation(libs.springBootTest)
-	testRuntimeOnly(libs.junitPlatformLauncher)
-	testImplementation(libs.junitJupiter)
-	testImplementation(libs.assertj)
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
