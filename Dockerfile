@@ -1,12 +1,6 @@
-FROM gradle:8.11.1-jdk21 as builder
-RUN mkdir job4j_devops
-WORKDIR /job4j_devops
-
-COPY build.gradle.kts settings.gradle.kts gradle.properties ./
-RUN gradle --no-daemon dependencies
+FROM openjdk:21-jdk as builder
 
 COPY . .
-RUN gradle clean --no-daemon build -x test
 RUN jar xf /job4j_devops/build/libs/DevOps-1.0.0.jar
 
 RUN jdeps --ignore-missing-deps -q \
@@ -14,7 +8,7 @@ RUN jdeps --ignore-missing-deps -q \
     --multi-release 21 \
     --print-module-deps \
     --class-path 'BOOT-INF/lib/*' \
-    /job4j_devops/build/libs/DevOps-1.0.0.jar > deps.info
+    /build/libs/DevOps-1.0.0.jar > deps.info
 RUN jlink \
     --add-modules $(cat deps.info) \
     --strip-debug \
@@ -27,8 +21,7 @@ FROM debian:bookworm-slim
 ENV JAVA_HOME=/user/java/jdk21
 ENV PATH=$JAVA_HOME/bin:$PATH
 COPY --from=builder /slim-jre $JAVA_HOME
-COPY --from=builder /job4j_devops/build/libs/DevOps-1.0.0.jar .
+COPY --from=builder /build/libs/DevOps-1.0.0.jar .
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-EXPOSE 8080
 ENTRYPOINT ["/entrypoint.sh"]
