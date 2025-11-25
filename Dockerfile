@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21 as builder
+FROM eclipse-temurin:21 AS builder
 
 COPY . .
 RUN jar xf /build/libs/DevOps-1.0.0.jar
