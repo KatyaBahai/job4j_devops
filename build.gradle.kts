@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.liquibase:liquibase-core:4.30.0")
+    }
+}
+
 plugins {
 	checkstyle
 	java
@@ -16,15 +25,6 @@ repositories {
     mavenCentral()
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.liquibase:liquibase-core:4.30.0")
-    }
-}
-
 dependencies {
 	compileOnly(libs.lombok)
 	annotationProcessor(libs.lombok)
@@ -37,6 +37,7 @@ dependencies {
 	testRuntimeOnly(libs.junitPlatformLauncher)
 	testImplementation(libs.junitJupiter)
 	testImplementation(libs.assertj)
+    testImplementation("org.testcontainers:postgresql:1.20.4")
 }
 
 liquibase {
@@ -53,7 +54,6 @@ liquibase {
     runList = "main"
 }
 
-
 dependencies {
     liquibaseRuntime("org.liquibase:liquibase-core:4.30.0")
     liquibaseRuntime("org.postgresql:postgresql:42.7.4")
@@ -63,6 +63,24 @@ dependencies {
     liquibaseRuntime("info.picocli:picocli:4.6.1")
 }
 
+sourceSets {
+    val integrationTest by sourceSets.creating {
+        java.srcDir("src/integrationTest/java")
+        resources.srcDir("src/integrationTest/resources")
+        compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+        runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
+    }
+}
+val integrationTest = sourceSets["integrationTest"]
+
+configurations {
+    val integrationTestImplementation by configurations.getting {
+        extendsFrom(configurations["testImplementation"])
+    }
+    val integrationTestRuntimeOnly by configurations.getting {
+        extendsFrom(configurations["testRuntimeOnly"])
+    }
+}
 
 
 tasks.withType<Test> {
@@ -107,10 +125,6 @@ tasks.spotbugsMain {
         required = true
         outputLocation.set(layout.buildDirectory.file("reports/spotbugs/spotbugs.html"))
     }
-}
-
-tasks.test {
-    finalizedBy(tasks.spotbugsMain)
 }
 
 tasks.register("checkJarSize") {
@@ -158,10 +172,25 @@ tasks.register("profile") {
     }
 }
 
+
+tasks.test {
+    finalizedBy(tasks.spotbugsMain)
+}
+
 tasks.named<Test>("test") {
     systemProperty("spring.datasource.url", env.DB_URL.value)
     systemProperty("spring.datasource.username", env.DB_USERNAME.value)
     systemProperty("spring.datasource.password", env.DB_PASSWORD.value)
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs the integration tests."
+    group = "verification"
+
+    testClassesDirs = integrationTest.output.classesDirs
+    classpath = integrationTest.runtimeClasspath
+
+    shouldRunAfter(tasks.test)
 }
 
 
