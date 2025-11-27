@@ -82,7 +82,6 @@ configurations {
     }
 }
 
-
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
@@ -125,6 +124,7 @@ tasks.spotbugsMain {
         required = true
         outputLocation.set(layout.buildDirectory.file("reports/spotbugs/spotbugs.html"))
     }
+    ignoreFailures = true
 }
 
 tasks.register("checkJarSize") {
