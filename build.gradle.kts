@@ -38,6 +38,9 @@ dependencies {
 	testImplementation(libs.junitJupiter)
 	testImplementation(libs.assertj)
     testImplementation("org.testcontainers:postgresql:1.20.4")
+    testImplementation("org.testcontainers:kafka:1.20.4")
+    implementation("org.springframework.kafka:spring-kafka")
+    testImplementation("org.awaitility:awaitility")
 }
 
 liquibase {
