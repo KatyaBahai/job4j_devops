@@ -1,20 +1,41 @@
 package ru.job4j.devops.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Instant;
 
 /**
  * Represents the result of a calculator operation.
  * Holds a single numeric value returned by the API.
  */
 @Data
+@Builder
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Entity(name = "results")
 public class Result {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    private Long id;
+
+    @Column(name = "first_arg")
+    private Double firstArg;
+
+    @Column(name = "second_arg")
+    private Double secondArg;
+
     /**
      * The numeric value produced by a calculation.
      */
-    private double value;
+    private Double result;
+
+    @Column(name = "creation_date")
+    private Instant createDate;
+
+    private String operation;
 
     /**
      * Creates an empty Result object.

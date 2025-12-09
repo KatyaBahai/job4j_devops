@@ -18,7 +18,7 @@ public class CalcService {
     private CalcEventRepository calcEventRepository;
 
     public CalcEvent addTwoNumbers(User user, Double first, Double second) {
-        Result result = new Result(first + second);
+        Double result = first + second;
         Instant creationData = Instant.now().truncatedTo(ChronoUnit.MINUTES);
         CalcEvent calcEvent = CalcEvent.builder()
                 .type("addition")
@@ -26,7 +26,7 @@ public class CalcService {
                 .creationDate(creationData)
                 .first(first)
                 .second(second)
-                .result(result.getValue())
+                .result(result)
                 .build();
         return calcEventRepository.save(calcEvent);
     }
